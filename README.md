@@ -154,35 +154,23 @@ cd app
 
 ---
 
-## 2. Docker-Image erstellen
+## 2. Anwendung und Datenbank mit Docker Compose starten
 
-Das Image wird über einen Multi-Stage-Build erstellt:
-
-```bash
-docker build -t buergermeldebox:v1 .
-```
-
-Dabei wird zunächst die Anwendung gebaut. Anschließend wird nur die für die Ausführung benötigte Anwendung und Runtime in das finale Image übernommen.
-
----
-
-## 3. Container starten
+Das Backend sowie die PostgreSQL-Datenbank werden gemeinsam mittels Docker Compose hochgefahren. Der Parameter `-d` sorgt dafür, dass die Container im Hintergrund laufen und dein Terminal frei bleibt.
 
 ```bash
-docker run -d -p 8080:8080 --name meldebox-test buergermeldebox:v1
+docker compose up --build -d
 ```
 
-Die Portweiterleitung bedeutet:
+**Was passiert hier im Hintergrund?**
+* **`--build`:** Baut das Dockerfile deiner App frisch (ersetzt das manuelle `docker build`). Das Image nutzt im Hintergrund weiterhin den sicheren Multi-Stage-Build.
+* **Healthcheck & Abhängigkeit:** Docker Compose wartet automatisch, bis die PostgreSQL-Datenbank bereit ist (`healthy`), und startet erst dann die Spring-Boot-Anwendung.
 
+Die Portweiterleitung verbindet deinen Computer mit dem App-Container:
 ```text
 Host:8080  →  Container:8080
 ```
 
-Die Anwendung ist anschließend unter folgendem Endpunkt erreichbar:
-
-```text
-http://localhost:8080
-```
 
 ---
 
