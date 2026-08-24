@@ -41,6 +41,13 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Postgresql Treiber für die Produktions- und Docker-Datenbank -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         
         <!-- Actuator für die K8s Liveness- und Readiness-Probes -->
         <dependency>
