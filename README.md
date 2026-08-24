@@ -174,42 +174,30 @@ Host:8080  →  Container:8080
 
 ---
 
-# 🔍 Verifikation
+## 🔍 Verifikation
 
-## 1. Laufenden Container überprüfen
-
+### 1. Laufende Container überprüfen
 ```bash
 docker ps
 ```
+Die Container **`buergermeldebox-app`** und **`buergermeldebox-db`** müssen als laufend angezeigt werden. Die Datenbank benötigt in der Spalte `STATUS` zudem das Attribut **`(healthy)`**.
 
-Der Container `meldebox-test` sollte als laufend angezeigt werden.
-
----
-
-## 2. Health-Endpunkt überprüfen
-
-Im Browser:
-
-```text
-http://localhost:8080/actuator/health
-```
-
-Alternativ über Git Bash:
+### 2. Health-Endpunkt überprüfen
+Im Browser, in Postman oder über Git Bash:
 
 ```bash
 curl http://localhost:8080/actuator/health
 ```
 
-Erwartet wird ein HTTP-Status `200 OK` sowie ein Health-Status `UP`.
+Erwartet wird ein HTTP-Status **200 OK** sowie ein detaillierter Health-Status **UP**.
 
-Beispiel:
-
+**Beispiel für die JSON-Antwort:**
 ```json
 {
   "components": {
     "db": {
       "details": {
-        "database": "H2",
+        "database": "PostgreSQL",
         "validationQuery": "isValid()"
       },
       "status": "UP"
@@ -231,101 +219,60 @@ Beispiel:
 }
 ```
 
-### Auswertung
+**Auswertung:**
+Der Health-Endpunkt bestätigt, dass die Anwendung betriebsbereit ist. Insbesondere wird die neue **PostgreSQL-Datenbankverbindung erfolgreich als `UP`** gemeldet. Die vorhandenen Liveness- und Readiness-Informationen können in Phase 3 als Grundlage für Kubernetes-Probes verwendet werden.
 
-Der Health-Endpunkt bestätigt, dass die Anwendung betriebsbereit ist.
-
-Insbesondere werden folgende Komponenten erfolgreich gemeldet:
-
-* H2-Datenbankverbindung: `UP`
-* Disk Space: `UP`
-* Liveness State: `UP`
-* Readiness State: `UP`
-
-Die vorhandenen Liveness- und Readiness-Informationen können in Phase 3 als Grundlage für Kubernetes-Probes verwendet werden.
-
----
-
-# 👤 Testprotokoll: Non-Root-Ausführung
-
-Mit folgendem Befehl wird die Benutzeridentität innerhalb des Containers überprüft:
+### 👤 Testprotokoll: Non-Root-Ausführung
+Mit folgendem Befehl wird die Benutzeridentität innerhalb des laufenden App-Containers überprüft:
 
 ```bash
-docker exec meldebox-test id
+docker compose exec app id
 ```
-
-Erwartetes Ergebnis:
-
+*Erwartetes Ergebnis:*
 ```text
 uid=999(appuser) gid=999(appgroup) groups=999(appgroup)
 ```
 
-### Auswertung
-
-Die UID `999` ist ungleich `0`. Der Java-Prozess läuft damit nicht als `root`.
+**Auswertung:**
+Die UID 999 ist ungleich 0. Der Java-Prozess läuft innerhalb des Containers somit sicherheitskonform nicht als root.
 
 Optional kann der Benutzername zusätzlich überprüft werden:
+```bash
+docker compose exec app whoami
+```
+*Erwartetes Ergebnis:* `appuser`
+
+---
+
+## 🧹 Container stoppen
+
+Um die gesamte Umgebung (Anwendung und Datenbank) sauber anzuhalten, nutze folgenden Befehl. Die gemeldeten Daten in der Datenbank bleiben dank des konfigurierten Docker-Volumes (`postgres-data`) auf der Festplatte erhalten:
 
 ```bash
-docker exec meldebox-test whoami
-```
-
-Erwartetes Ergebnis:
-
-```text
-appuser
+docker compose down
 ```
 
 ---
 
-# 🧹 Container stoppen und entfernen
+## 🧪 Reproduzierbarer Testablauf
 
-Zum Beenden des Containers:
-
-```bash
-docker stop meldebox-test
-```
-
-Zum Entfernen:
+Ein vollständiger, automatisierter Durchlauf von der Code-Änderung bis zur Verifikation in einem Rutsch:
 
 ```bash
-docker rm meldebox-test
-```
-
-Alternativ können beide Schritte kombiniert werden:
-
-```bash
-docker rm -f meldebox-test
-```
-
-Damit kann der Container anschließend erneut mit demselben Namen gestartet werden.
-
----
-
-# 🧪 Reproduzierbarer Testablauf
-
-Ein vollständiger Durchlauf von Build bis Verifikation:
-
-```bash
+# 1. In den Ordner wechseln
 cd app
 
-docker build -t buergermeldebox:v1 .
+# 2. Bestehende Container stoppen, frisch bauen und im Hintergrund starten
+docker compose down
+docker compose up --build -d
 
-docker rm -f meldebox-test 2>/dev/null || true
-
-docker run -d \
-  -p 8080:8080 \
-  --name meldebox-test \
-  buergermeldebox:v1
-
+# 3. Status und Non-Root-User prüfen
 docker ps
+docker compose exec app id
 
+# 4. API-Health abfragen
 curl http://localhost:8080/actuator/health
-
-docker exec meldebox-test id
 ```
-
-Damit werden sowohl die technische Funktion als auch die Non-Root-Ausführung überprüft.
 
 ---
 
