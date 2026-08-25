@@ -45,7 +45,7 @@ Die Anwendung läuft zunächst lokal auf einem Windows-11-Arbeitsplatz. Docker D
 │  │  │   │   Java 21                               │   │  │  │
 │  │  │   │   REST API                              │   │  │  │
 │  │  │   │   Spring Boot Actuator                  │   │  │  │
-│  │  │   │   H2 Database                            │   │  │  │
+│  │  │   │   PostgreSQL Datenbank                  │   │  │  │
 │  │  │   │                                         │   │  │  │
 │  │  │   │   User: appuser (UID 999)              │   │  │  │
 │  │  │   └─────────────────────────────────────────┘   │  │  │
@@ -78,7 +78,7 @@ Der Java-Prozess läuft innerhalb des Containers nicht als `root`, sondern unter
 Spring Boot Actuator stellt Health-Informationen zur Verfügung. Diese bilden die Grundlage für die später geplanten Kubernetes-Liveness- und Readiness-Probes.
 
 **Lokale Datenhaltung:**
-In Phase 1 wird H2 als interne Datenbank verwendet. Eine externe bzw. hochverfügbare Datenbank ist bewusst noch nicht Bestandteil dieser Phase.
+Die persistente Datenhaltung wird durch die PostgreSQL Datenbank ermöglicht.
 
 ---
 
@@ -98,7 +98,7 @@ In Phase 1 wird H2 als interne Datenbank verwendet. Eine externe bzw. hochverfü
 * **Build-System:** Maven
 * **Containerisierung:** Docker
 * **Build-Verfahren:** Multi-Stage Docker Build
-* **Datenbank:** H2
+* **Datenbank:** PostgreSQL
 * **Monitoring/Health:** Spring Boot Actuator
 
 Das finale Runtime-Image soll ausschließlich die für den Betrieb erforderliche Java-Laufzeit und die gebaute Anwendung enthalten.
