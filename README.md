@@ -36,20 +36,20 @@ Die Anwendung läuft zunächst lokal auf einem Windows-11-Arbeitsplatz. Docker D
 │  ┌───────────────────────────────────────────────────────────────────┐  │
 │  │                    Docker Desktop (WSL2 Backend)                  │  │
 │  │                                                                   │  │
-│  │  ┌─────────────────────────┐        ┌─────────────────────────┐  │  │
-│  │  │ Container:              │        │ Container:              │  │  │
-│  │  │ buergermeldebox-app     │        │ buergermeldebox-db      │  │  │
-│  │  │                         │        │                         │  │  │
-│  │  │ Spring Boot             │        │ PostgreSQL              │  │  │
-│  │  │ Java 21                 │        │ Port 5432               │  │  │
-│  │  │ REST API                │        │                         │  │  │
-│  │  │ Actuator Health         │        │                         │  │  │
-│  │  │                         │        │                         │  │  │
-│  │  │ appuser (non-root)      │        │                         │  │  │
-│  │  └───────────┬─────────────┘        └───────────┬─────────────┘  │  │
-│  │              │                                  │                │  │
-│  │              │        Docker Network            │                │  │
-│  │              └──────────────────────────────────┘                │  │
+│  │  ┌─────────────────────────┐        ┌─────────────────────────┐   │  │
+│  │  │ Container:              │        │ Container:              │   │  │
+│  │  │ buergermeldebox-app     │        │ buergermeldebox-db      │   │  │
+│  │  │                         │        │                         │   │  │
+│  │  │ Spring Boot             │        │ PostgreSQL              │   │  │
+│  │  │ Java 21                 │        │ Port 5432               │   │  │
+│  │  │ REST API                │        │                         │   │  │
+│  │  │ Actuator Health         │        │                         │   │  │
+│  │  │                         │        │                         │   │  │
+│  │  │ appuser (non-root)      │        │                         │   │  │
+│  │  └───────────┬─────────────┘        └───────────┬─────────────┘   │  │
+│  │              │                                  │                 │  │
+│  │              │        Docker Network            │                 │  │
+│  │              └──────────────────────────────────┘                 │  │
 │  │                                                                   │  │
 │  │                                      ┌─────────────────────────┐  │  │
 │  │                                      │ postgres-data           │  │  │
