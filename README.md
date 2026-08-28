@@ -303,7 +303,7 @@ curl http://localhost:8080/actuator/health
 
 # 🛣️ Nächste Schritte
 
-## Phase 2 – Legacy-VM & Ansible
+## Phase 2 – Legacy-VM & Ansible (In Bearbeitung)
 
 Die nächste Phase simuliert eine klassische Legacy-Serverumgebung.
 
@@ -315,6 +315,27 @@ Geplant sind:
 * reproduzierbare Serverkonfiguration
 * Trennung von Konfiguration und manueller Administration
 * automatisiertes Deployment der Anwendung
+
+Bisher umgesetzt:
+
+* Bereitstellung einer Ubuntu-VM
+* Einrichtung des SSH-Zugriffs
+* Automatisierte Konfiguration der VM mit Ansible
+* Installation von Java 21
+* Einrichtung eines dedizierten Anwendungsbenutzers
+* Erstellung und Konfiguration des Anwendungsverzeichnisses `/opt/buergermeldebox`
+* Reproduzierbare Servergrundkonfiguration
+
+Noch umzusetzen
+
+* Übertragung der gebauten Spring-Boot-Anwendung auf die Ubuntu-VM
+* Einrichtung der benötigten PostgreSQL-Datenbank auf der VM
+* Konfiguration der Anwendung für die VM-Umgebung
+* Einrichtung eines systemd-Service für die Anwendung
+* Automatischer Start der Anwendung nach einem Neustart der VM
+* Automatisiertes Deployment der Anwendung über Ansible
+* Überprüfung des Deployments über den Actuator-Health-Endpunkt
+* Erneuter Durchlauf des Ansible-Playbooks zur Überprüfung der Reproduzierbarkeit
 
 Ziel ist es, den Übergang von einer manuell administrierten Umgebung zu einer reproduzierbaren Infrastructure-as-Code-/Configuration-as-Code-Arbeitsweise zu demonstrieren.
 
