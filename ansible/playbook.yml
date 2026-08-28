@@ -1,0 +1,29 @@
+- name: Prepare Ubuntu server
+  hosts: servers
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Install Java 21
+      ansible.builtin.apt:
+        name: openjdk-21-jre
+        state: present
+
+    - name: Create application user
+      ansible.builtin.user:
+        name: appuser
+        system: true
+        create_home: false
+        shell: /usr/sbin/nologin
+        state: present
+
+    - name: Create application directory
+      ansible.builtin.file:
+        path: /opt/buergermeldebox
+        state: directory
+        owner: appuser
+        group: appuser
+        mode: '0755'
