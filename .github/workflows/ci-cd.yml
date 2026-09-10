@@ -43,7 +43,7 @@ jobs:
         docker build -t buergermeldebox:test .
 
     - name: Docker Image mit Trivy auf Sicherheitslücken scannen
-      uses: aquasecurity/trivy-action@0.29.0 #Feste Version verwenden
+      uses: aquasecurity/trivy-action@v0.29.0 #Feste Version verwenden
       with:
         image-ref: 'buergermeldebox:test'
         format: 'table'
