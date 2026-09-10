@@ -25,10 +25,8 @@ jobs:
 
     - name: Anwendung mit Maven testen und bauen
       working-directory: buergermeldebox-devops-lab/app
-      # HIER IST DIE ÄNDERUNG: Erst Rechte geben, dann ausführen
-      run: |
-        chmod +x mvnw
-        ./mvnw clean package
+      # GEÄNDERT: Wir nutzen direkt globales maven statt dem Wrapper, um CRLF-Fehler zu vermeiden
+      run: mvn clean package
 
   # Job 2: Docker Image bauen und auf Sicherheit prüfen
   docker-security-scan:
