@@ -1,0 +1,55 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # Job 1: Java Anwendung bauen und testen
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Code auschecken
+      uses: actions/checkout@v4
+
+    - name: Java 21 einrichten
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+        cache: 'maven'
+        # Pfad zur pom.xml angeben, damit das Caching funktioniert:
+        cache-dependency-path: 'buergermeldebox-devops-lab/app/pom.xml'
+
+    - name: Anwendung mit Maven testen und bauen
+      # Hier sagen wir Maven, wo die App liegt:
+      working-directory: buergermeldebox-devops-lab/app
+      run: ./mvnw clean package
+
+  # Job 2: Docker Image bauen und auf Sicherheit prüfen
+  docker-security-scan:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Code auschecken
+      uses: actions/checkout@v4
+
+    - name: Docker Image lokal bauen
+      # Wir wechseln in den Ordner, in dem das Dockerfile liegt:
+      working-directory: buergermeldebox-devops-lab/app
+      run: |
+        docker build -t buergermeldebox:test .
+
+    - name: Docker Image mit Trivy auf Sicherheitslücken scannen
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'buergermeldebox:test'
+        format: 'table'
+        exit-code: '0'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
