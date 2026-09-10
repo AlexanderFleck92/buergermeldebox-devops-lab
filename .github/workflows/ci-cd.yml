@@ -21,13 +21,14 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
         cache: 'maven'
-        # Pfad zur pom.xml angeben, damit das Caching funktioniert:
         cache-dependency-path: 'buergermeldebox-devops-lab/app/pom.xml'
 
     - name: Anwendung mit Maven testen und bauen
-      # Hier sagen wir Maven, wo die App liegt:
       working-directory: buergermeldebox-devops-lab/app
-      run: ./mvnw clean package
+      # HIER IST DIE ÄNDERUNG: Erst Rechte geben, dann ausführen
+      run: |
+        chmod +x mvnw
+        ./mvnw clean package
 
   # Job 2: Docker Image bauen und auf Sicherheit prüfen
   docker-security-scan:
@@ -39,7 +40,6 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Docker Image lokal bauen
-      # Wir wechseln in den Ordner, in dem das Dockerfile liegt:
       working-directory: buergermeldebox-devops-lab/app
       run: |
         docker build -t buergermeldebox:test .
